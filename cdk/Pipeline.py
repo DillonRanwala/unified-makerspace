@@ -31,7 +31,7 @@ class Pipeline(core.Stack):
         deploy_cdk_shell_step = ShellStep("Synth",
             # use a connection created using the AWS console to authenticate to GitHub
             input=CodePipelineSource.connection("clemsonMakerspace/unified-makerspace", "mainline",
-                connection_arn="arn:aws:codestar-connections:us-east-1:944207523762:connection/0d26aa24-5271-44cc-b436-3ddd4e2c9842"
+                connection_arn="arn:aws:codestar-connections:us-east-1:149497240198:connection/f73576b4-95d9-412c-9834-826753ec9b55"#"arn:aws:codestar-connections:us-east-1:944207523762:connection/0d26aa24-5271-44cc-b436-3ddd4e2c9842"
             ),
             commands=[    
                 # install dependancies for frontend
