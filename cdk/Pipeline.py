@@ -44,9 +44,9 @@ class Pipeline(core.Stack):
                 'cp -r dist/* ../../cdk/visit/console/Beta',
 
                 # build for prod
-                f'VITE_API_ENDPOINT="https://{Domains("Prod").api}" npm run build',
-                'mkdir -p ../../cdk/visit/console/Prod',
-                'cp -r dist/* ../../cdk/visit/console/Prod',
+                # f'VITE_API_ENDPOINT="https://{Domains("Prod").api}" npm run build',
+                # 'mkdir -p ../../cdk/visit/console/Prod',
+                # 'cp -r dist/* ../../cdk/visit/console/Prod',
                 
                 'cd ../..',
 
@@ -62,14 +62,19 @@ class Pipeline(core.Stack):
             synth=deploy_cdk_shell_step,
             cross_account_keys=True  # necessary to allow the prod account to access our artifact bucket
         )
-        
-        # create the stack for beta
-        self.beta_stage = MakerspaceStage(self, 'Beta', env=accounts['Beta'])
-        pipeline.add_stage(self.beta_stage)
+     
+        # create the stack for dev
+        deploy = MakerspaceStage(self, 'Dev', env=accounts['Dev-dranwal'])
+        deploy_stage = pipeline.add_stage(deploy)
 
-        # create the stack for prod
-        self.prod_stage = MakerspaceStage(self, 'Prod', env=accounts['Prod'])
-        pipeline.add_stage(self.prod_stage, 
-            pre=[ManualApprovalStep("PromoteBetaToProd")]
-        )
+        
+        # # create the stack for beta
+        # self.beta_stage = MakerspaceStage(self, 'Beta', env=accounts['Beta'])
+        # pipeline.add_stage(self.beta_stage)
+
+        # # create the stack for prod
+        # self.prod_stage = MakerspaceStage(self, 'Prod', env=accounts['Prod'])
+        # pipeline.add_stage(self.prod_stage, 
+        #     pre=[ManualApprovalStep("PromoteBetaToProd")]
+        # )
 

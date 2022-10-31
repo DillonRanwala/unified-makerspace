@@ -24,8 +24,9 @@ Also, all Pipeline-related resources go here, because we don't deploy
 those directly. Instead, we use the Pipline's self-mutation to update
 all the child stacks. So, everything beta/prod goes here.
 """
+pipeline = Pipeline(app, 'Pipeline', env=accounts['Dev-dranwal'])
 
-pipeline = Pipeline(app, 'Pipeline', env=accounts['Beta'])
+#pipeline = Pipeline(app, 'Pipeline', env=accounts['Beta'])
 
 """
 Section 2: Resources that exist within the same account
@@ -36,14 +37,14 @@ only credentials that deploy to their own dev account. This loop
 generates a stack for each user that deploys to their own account.
 """
 
-user = os.environ.get("USER")
-stage = f'Dev-{user}'
-dev_environment = accounts.get(stage)
+# user = os.environ.get("USER")
+# stage = f'Dev-{user}'
+# dev_environment = accounts.get(stage)
 
-if dev_environment:
-    MakerspaceStack(app, 'Dev', env=accounts[stage])
-else:
-    print(
-        f'Not creating dev stack: could not locate stage={stage} for user={user}')
+# if dev_environment:
+#     MakerspaceStack(app, 'Dev', env=accounts[stage])
+# else:
+#     print(
+#         f'Not creating dev stack: could not locate stage={stage} for user={user}')
 
 app.synth()
