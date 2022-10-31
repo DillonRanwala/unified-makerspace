@@ -3,7 +3,7 @@ from aws_cdk import core
 
 accounts = {
     'Dns': {
-        'account': '366442540808',
+        'account': "149497240198", #'366442540808',
         'region': 'us-east-1'
     },
     'Prod': {
@@ -11,7 +11,7 @@ accounts = {
         'region': 'us-east-1'
     },
     'Beta': {
-        'account': '944207523762',
+        'account': "149497240198", #'944207523762',
         'region': 'us-east-1'
     },
     # Brandy Barfield, Capstone Spring 2022
