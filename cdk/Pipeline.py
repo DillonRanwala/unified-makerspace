@@ -38,10 +38,10 @@ class Pipeline(core.Stack):
                 'cd site/visitor-console',
                 'npm install',
 
-                # build for beta
-                f'VITE_API_ENDPOINT="https://{Domains("Beta").api}" npm run build',
-                'mkdir -p ../../cdk/visit/console/Beta',
-                'cp -r dist/* ../../cdk/visit/console/Beta',
+                # build for dev
+                f'VITE_API_ENDPOINT="https://{Domains("Dev").api}" npm run build',
+                'mkdir -p ../../cdk/visit/console/Dev',
+                'cp -r dist/* ../../cdk/visit/console/Dev',
 
                 # build for prod
                 # f'VITE_API_ENDPOINT="https://{Domains("Prod").api}" npm run build',
