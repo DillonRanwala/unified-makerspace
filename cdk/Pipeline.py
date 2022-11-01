@@ -30,7 +30,7 @@ class Pipeline(core.Stack):
         #                   during the subsequent deployments.
         deploy_cdk_shell_step = ShellStep("Synth",
             # use a connection created using the AWS console to authenticate to GitHub
-            input=CodePipelineSource.connection("DillonRanwala/unified-makerspace", "mainline",
+            input=CodePipelineSource.connection("DillonRanwala/unified-makerspace", "pipeline_dev",
                 connection_arn="arn:aws:codestar-connections:us-east-1:149497240198:connection/24ef657f-09b9-40ed-bdbf-7f57ea583228"
             ),
             commands=[    
