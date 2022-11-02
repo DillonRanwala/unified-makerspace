@@ -67,6 +67,16 @@ class Pipeline(core.Stack):
         deploy = MakerspaceStage(self, 'Dev', env=accounts['Dev-dranwal'])
         deploy_stage = pipeline.add_stage(deploy)
 
+        deploy_stage.add_post(
+            pipeline.ShellStep(
+                "TestAPIGatewayEndpoint",
+                commands=[
+                    "curl --location -X POST {deploy.service.api_gateway.api.url}/visit",
+                ],
+            )
+        )
+
+      
         
         # # create the stack for beta
         # self.beta_stage = MakerspaceStage(self, 'Beta', env=accounts['Beta'])
