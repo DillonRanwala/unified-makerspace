@@ -72,6 +72,11 @@ class Pipeline(core.Stack):
                 "TestCloudfrontEndpoint",
                 commands=[
                     "curl https://d1byeqit66b8mv.cloudfront.net/",
+                    "curl https://d1byeqit66b8mv.cloudfront.net/watt_center",
+                    "curl https://d1byeqit66b8mv.cloudfront.net/cooper_library",
+                    "curl https://d1byeqit66b8mv.cloudfront.net/cook_lab",
+                    "curl https://d1byeqit66b8mv.cloudfront.net/register",
+
                 ],
             )
         )
