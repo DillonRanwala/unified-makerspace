@@ -68,10 +68,10 @@ class Pipeline(core.Stack):
         deploy_stage = pipeline.add_stage(deploy)
 
         deploy_stage.add_post(
-            pipeline.ShellStep(
-                "TestAPIGatewayEndpoint",
+            ShellStep(
+                "TestCloudfrontEndpoint",
                 commands=[
-                    "curl --location -X POST {deploy.service.api_gateway.api.url}/visit",
+                    "curl https://d1byeqit66b8mv.cloudfront.net/",
                 ],
             )
         )
