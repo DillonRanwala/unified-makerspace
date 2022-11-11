@@ -59,6 +59,7 @@ class Visit(core.Stack):
             original_table_name, visits_table_name, users_table_name, ("https://" + self.domain_name))
         self.register_user_lambda(
             original_table_name, users_table_name, ("https://" + self.domain_name))
+        self.test_api_lambda()
 
         
 

@@ -71,7 +71,7 @@ class Pipeline(core.Stack):
             ShellStep(
                 "TestCloudfrontEndpoint",
                 commands=[
-                    "curl https://d1byeqit66b8mv.cloudfrontttttttt.net/",
+                    "curl https://d1byeqit66b8mv.cloudfront.net/",
 
                 ],
             )
