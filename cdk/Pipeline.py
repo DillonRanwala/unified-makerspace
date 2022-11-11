@@ -81,6 +81,18 @@ class Pipeline(core.Stack):
             )
         )
 
+        # ShellStep(
+        #         "TestAPIGatewayEndpoint",
+        #         env_from_cfn_outputs={
+        #             "ENDPOINT_URL": deploy.service.api_gateway.api.url
+        #         },
+        #         commands=[
+        #             "curl -Ssf $ENDPOINT_URL/visit",
+        #             "curl -Ssf $ENDPOINT_URL/register",
+        #         ],
+        #     )
+        # )
+
       
         
         # # create the stack for beta
