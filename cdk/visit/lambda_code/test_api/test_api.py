@@ -1,10 +1,14 @@
 
 import os
 import logging
-import requests
+from botocore.vendored import requests
 import boto3
 from datetime import datetime
+import json
+import urllib3
 
+http = urllib3.PoolManager()  #- lambda might not be able to use requests
+# r = http.request('GET', 'http://httpbin.org/robots.txt')
 
 #TODO: pass in api url as a parameter, don't hardcode if possible
 class TestAPIFunction():
@@ -19,20 +23,20 @@ class TestAPIFunction():
 
 
     def handle_test_api(self):
-        # datetime object containing current date and time
+        http = urllib3.PoolManager()  
+
         now = datetime.now()
-        
         dt_string = now.strftime("%d/%m/%Y_%H:%M:%S")
 
 
         api_url = "https://r90fend561.execute-api.us-east-1.amazonaws.com/prod/"
 
         visit_data = {"username":"PIPELINE_DEV_TEST_"+dt_string,"location":"Watt","tool":"Visiting"}
+        visit_data = json.dumps(visit_data)
 
+        visit_response = http.request('POST', str(api_url)+"visit",body=visit_data)
 
-        visit_response = requests.post(api_url + "visit", json = visit_data)
-
-        if visit_response.status_code != 200:
+        if visit_response.status != 200:
             raise Exception("Visit API Call Failed")
 
         register_data = {
@@ -48,21 +52,21 @@ class TestAPIFunction():
             "Minor": ["Business Administration"]
         }
 
-        reg_response = requests.post(api_url + "register", json = register_data)
+        register_data = json.dumps(register_data)
 
-        if reg_response.status_code != 200:
+        reg_response = http.request('POST', str(api_url)+"register",body=register_data)
+
+        if reg_response.status != 200: 
             raise Exception("Register API Call Failed")
 
-        print("success")
 
-
-        return visit_response.status_code == 200 and reg_response.status_code== 200
+        return visit_response.status == 200 and reg_response.status== 200
         
 
 
 test_api_function = TestAPIFunction()
 
-def handler():
+def handler(request, context):
     # This will be hit in prod, and will connect to the stood-up dynamodb
     # and Simple Email Service clients.
     return test_api_function.handle_test_api()
