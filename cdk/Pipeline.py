@@ -120,6 +120,16 @@ class Pipeline(core.Stack):
                 ],
             )
         )
+
+        deploy_stage.add_post(
+            ShellStep(
+                "TestAPIEndpoints",
+                commands=[
+                    "python3 visit/lambda_code/test_api/testing_script.py ",
+
+                ],
+            )
+        )
         deploy_stage.add_post(ManualApprovalStep("PromoteBetaToProd"))
         # deploy_stage.add_post(LambdaInvokeAction(
         #     action_name="Test_API_Lambda",
