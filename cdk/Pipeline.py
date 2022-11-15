@@ -100,8 +100,7 @@ class Pipeline(core.Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_9)
         )
 
-        test_stage = pipeline.add_stage(
-            stage_name='RunTestStage',
+        test_stage = pipeline.add_stage('RunTestStage',
             placement=StagePlacement(
                 just_after=deploy
             ),
