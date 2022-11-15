@@ -4,6 +4,7 @@ from aws_cdk import (
     core,
     aws_lambda
 )
+
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep
 from aws_cdk.aws_codepipeline_actions import LambdaInvokeAction
 from aws_cdk.aws_codepipeline import StagePlacement
@@ -102,7 +103,7 @@ class Pipeline(core.Stack):
         test_stage = pipeline.add_stage(
             stage_name='RunTestStage',
             placement=StagePlacement(
-                just_after=pipeline.stage(
+                just_after=pipeline.pipeline.stage(
                     'Dev'
                 )
             ),
