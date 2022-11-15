@@ -103,9 +103,7 @@ class Pipeline(core.Stack):
         test_stage = pipeline.add_stage(
             stage_name='RunTestStage',
             placement=StagePlacement(
-                just_after=pipeline.pipeline.stage(
-                    'Dev'
-                )
+                just_after=deploy
             ),
             actions=[
                 lambda_action
