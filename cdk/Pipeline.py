@@ -5,7 +5,7 @@ from aws_cdk import (
     aws_lambda
 )
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep
-from aws_cdk.codepipeline_actions import LambdaInvokeAction
+from aws_cdk.aws_codepipeline_actions import LambdaInvokeAction
 from makerspace import MakerspaceStage
 
 from accounts_config import accounts
@@ -96,7 +96,7 @@ class Pipeline(core.Stack):
             handler='test_api.handler',
             runtime=aws_lambda.Runtime.PYTHON_3_9)
         )
-        
+
         testing = TestStage(self, 'Dev', env=accounts['Dev-dranwal'])
         testing_stage = pipeline.add_stage(testing, actions=[lambda_action])
         
