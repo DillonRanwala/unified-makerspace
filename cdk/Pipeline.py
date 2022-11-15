@@ -1,13 +1,22 @@
 # This stack is based on the following blog post:
 # https://aws.amazon.com/blogs/developer/cdk-pipelines-continuous-delivery-for-aws-cdk-applications/
 from aws_cdk import (
-    core
+    core,
+    aws_lambda
 )
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep
+from aws_cdk.codepipeline_actions import LambdaInvokeAction
 from makerspace import MakerspaceStage
 
 from accounts_config import accounts
 from dns import Domains
+
+class TestStage(core.Stage):
+    def __init__(self, scope: core.Construct, stage: str, *,
+                 env: core.Environment) -> None:
+        super().__init__(scope, stage, env=env)
+
+        self.api_gateway = "https://r90fend561.execute-api.us-east-1.amazonaws.com/prod/"
 
 class Pipeline(core.Stack):
     def __init__(self, app: core.App, id: str, *,
@@ -77,6 +86,20 @@ class Pipeline(core.Stack):
             )
         )
 
+        lambda_action = LambdaInvokeAction(
+            action_name="Test_API_Lambda",
+            lambda_= aws_lambda.Function(self,
+            'TestAPILambda',
+            function_name=core.PhysicalName.GENERATE_IF_NEEDED,
+            code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
+            environment={},
+            handler='test_api.handler',
+            runtime=aws_lambda.Runtime.PYTHON_3_9)
+        )
+        
+        testing = TestStage(self, 'Dev', env=accounts['Dev-dranwal'])
+        testing_stage = pipeline.add_stage(testing, actions=[lambda_action])
+        
         # ShellStep(
         #         "TestAPIGatewayEndpoint",
         #         env_from_cfn_outputs={
