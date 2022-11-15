@@ -14,31 +14,13 @@ from makerspace import MakerspaceStage
 from accounts_config import accounts
 from dns import Domains
 
-import jsii
-class TestStage(core.Stage):
-    def __init__(self, scope: core.Construct, stage: str, *,
-                 env: core.Environment) -> None:
-        super().__init__(scope, stage, env=env)
 
-        self.api_gateway = "https://r90fend561.execute-api.us-east-1.amazonaws.com/prod/"
-
-
-@jsii.implements(ICodePipelineActionFactory)
-class SomeStep(Step):
-    def __init__(self, id_):
-        super().__init__(id_)
+class SomeStep(ICodePipelineActionFactory)):
+    def __init__(self):
+        super().__init__("TestAPIStep")
  
-    @jsii.member(jsii_name="produceAction")
-    def produce_action(
-            self, stage: IStage,
-            options: ProduceActionOptions,
-            # TODO why are these not passed?
-            # *,
-            # action_name, artifacts, pipeline, run_order, scope,
-            # before_self_mutation=None,
-            # code_build_defaults=None,
-            # fallback_artifact=None
-    ) -> CodePipelineActionFactoryResult:
+
+    def produce_action(self, stage, *, scope, actionName, runOrder, variablesNamespace=None, artifacts, fallbackArtifact=None, pipeline, codeBuildDefaults=None, beforeSelfMutation=None):
         stage.add_action(LambdaInvokeAction(
             action_name="Test_API_Lambda",
             lambda_= aws_lambda.Function(self,
@@ -109,7 +91,7 @@ class Pipeline(core.Stack):
      
         # create the stack for dev
         deploy = MakerspaceStage(self, 'Dev', env=accounts['Dev-dranwal'])
-        deploy_stage = pipeline.add_stage(deploy, post=[SomeStep("TestAPI")])
+        deploy_stage = pipeline.add_stage(deploy, post=[SomeStep()])
 
         deploy_stage.add_post(
             ShellStep(
