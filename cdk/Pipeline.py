@@ -5,7 +5,7 @@ from aws_cdk import (
     aws_lambda
 )
 
-from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep
+from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep, ICodePipelineActionFactory
 from aws_cdk.aws_codepipeline_actions import LambdaInvokeAction
 from aws_cdk.aws_codepipeline import StagePlacement
 
@@ -20,6 +20,38 @@ class TestStage(core.Stage):
         super().__init__(scope, stage, env=env)
 
         self.api_gateway = "https://r90fend561.execute-api.us-east-1.amazonaws.com/prod/"
+
+# class MyJenkinsStep(ICodePipelineActionFactory):
+#     def __init__(self, provider, input):
+#         super().__init__("MyJenkinsStep")
+
+#         # This is necessary if your step accepts parametres, like environment variables,
+#         # that may contain outputs from other steps. It doesn't matter what the
+#         # structure is, as long as it contains the values that may contain outputs.
+#         self.discover_referenced_outputs({
+#             "env": {}
+#         })
+
+#     def produce_action(self, stage, *, scope, actionName, runOrder, variablesNamespace=None, artifacts, fallbackArtifact=None, pipeline, codeBuildDefaults=None, beforeSelfMutation=None):
+
+#         # This is where you control what type of Action gets added to the
+#         # CodePipeline
+#         stage.add_action(cpactions.JenkinsAction(
+#             # Copy 'actionName' and 'runOrder' from the options
+#             action_name=action_name,
+#             run_order=run_order,
+
+#             # Jenkins-specific configuration
+#             type=cpactions.JenkinsActionType.TEST,
+#             jenkins_provider=self.provider,
+#             project_name="MyJenkinsProject",
+
+#             # Translate the FileSet into a codepipeline.Artifact
+#             inputs=[artifacts.to_code_pipeline(self.input)]
+#         ))
+
+#         return pipelines.CodePipelineActionFactoryResult(run_orders_consumed=1)
+
 
 class Pipeline(core.Stack):
     def __init__(self, app: core.App, id: str, *,
@@ -88,18 +120,18 @@ class Pipeline(core.Stack):
                 ],
             )
         )
+        deploy_stage.add_post(ManualApprovalStep("PromoteBetaToProd"))
+        # deploy_stage.add_post(LambdaInvokeAction(
+        #     action_name="Test_API_Lambda",
+        #     lambda_= aws_lambda.Function(self,
+        #     'TestAPILambda',
+        #     function_name=core.PhysicalName.GENERATE_IF_NEEDED,
+        #     code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
+        #     environment={},
+        #     handler='test_api.handler',
+        #     runtime=aws_lambda.Runtime.PYTHON_3_9)
+        # ))
 
-        deploy_stage.add_post(LambdaInvokeAction(
-            action_name="Test_API_Lambda",
-            lambda_= aws_lambda.Function(self,
-            'TestAPILambda',
-            function_name=core.PhysicalName.GENERATE_IF_NEEDED,
-            code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
-            environment={},
-            handler='test_api.handler',
-            runtime=aws_lambda.Runtime.PYTHON_3_9)
-        ))
-        
         lambda_action = LambdaInvokeAction(
             action_name="Test_API_Lambda",
             lambda_= aws_lambda.Function(self,
