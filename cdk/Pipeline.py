@@ -6,6 +6,8 @@ from aws_cdk import (
 )
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep
 from aws_cdk.aws_codepipeline_actions import LambdaInvokeAction
+from aws_cdk.aws_codepipeline import StagePlacement
+
 from makerspace import MakerspaceStage
 
 from accounts_config import accounts
@@ -97,8 +99,19 @@ class Pipeline(core.Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_9)
         )
 
-        testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
-        testing_stage = pipeline.add_stage(testing, actions=[lambda_action])
+        test_stage = pipeline.add_stage(
+            stage_name='RunTestStage',
+            placement=StagePlacement(
+                just_after=pipeline.stage(
+                    'Dev'
+                )
+            ),
+            actions=[
+                lambda_action
+            ]
+        )
+        #testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
+        #testing_stage = pipeline.add_stage(testing, actions=[lambda_action])
         
         # ShellStep(
         #         "TestAPIGatewayEndpoint",
