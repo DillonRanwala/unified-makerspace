@@ -97,7 +97,7 @@ class Pipeline(core.Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_9)
         )
 
-        testing = TestStage(self, 'Dev', env=accounts['Dev-dranwal'])
+        testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
         testing_stage = pipeline.add_stage(testing, actions=[lambda_action])
         
         # ShellStep(
