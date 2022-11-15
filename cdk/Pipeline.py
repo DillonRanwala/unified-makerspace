@@ -89,6 +89,17 @@ class Pipeline(core.Stack):
             )
         )
 
+        deploy_stage.add_post(LambdaInvokeAction(
+            action_name="Test_API_Lambda",
+            lambda_= aws_lambda.Function(self,
+            'TestAPILambda',
+            function_name=core.PhysicalName.GENERATE_IF_NEEDED,
+            code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
+            environment={},
+            handler='test_api.handler',
+            runtime=aws_lambda.Runtime.PYTHON_3_9)
+        ))
+        
         lambda_action = LambdaInvokeAction(
             action_name="Test_API_Lambda",
             lambda_= aws_lambda.Function(self,
@@ -104,7 +115,6 @@ class Pipeline(core.Stack):
         #testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
 
         #test_stage = pipeline.add_stage(testing)
-        deploy_stage.add_action(lambda_action)
         #testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
         #testing_stage = pipeline.add_stage(testing, actions=[lambda_action])
         
