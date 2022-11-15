@@ -15,7 +15,7 @@ from accounts_config import accounts
 from dns import Domains
 
 
-class SomeStep(ICodePipelineActionFactory)):
+class SomeStep(ICodePipelineActionFactory):
     def __init__(self):
         super().__init__("TestAPIStep")
  
