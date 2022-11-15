@@ -101,10 +101,10 @@ class Pipeline(core.Stack):
         )
 
 
-        testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
+        #testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
 
-        test_stage = pipeline.add_stage(testing)
-        test_stage.add_action(lambda_action)
+        #test_stage = pipeline.add_stage(testing)
+        deploy_stage.add_action(lambda_action)
         #testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
         #testing_stage = pipeline.add_stage(testing, actions=[lambda_action])
         
