@@ -5,15 +5,16 @@ from aws_cdk import (
     aws_lambda
 )
 
-from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep, ICodePipelineActionFactory
+from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep, ICodePipelineActionFactory, Step, ProduceActionOptions, CodePipelineActionFactoryResult
 from aws_cdk.aws_codepipeline_actions import LambdaInvokeAction
-from aws_cdk.aws_codepipeline import StagePlacement
+from aws_cdk.aws_codepipeline import StagePlacement, IStage
 
 from makerspace import MakerspaceStage
 
 from accounts_config import accounts
 from dns import Domains
 
+import jsii
 class TestStage(core.Stage):
     def __init__(self, scope: core.Construct, stage: str, *,
                  env: core.Environment) -> None:
@@ -21,37 +22,36 @@ class TestStage(core.Stage):
 
         self.api_gateway = "https://r90fend561.execute-api.us-east-1.amazonaws.com/prod/"
 
-# class MyJenkinsStep(ICodePipelineActionFactory):
-#     def __init__(self, provider, input):
-#         super().__init__("MyJenkinsStep")
 
-#         # This is necessary if your step accepts parametres, like environment variables,
-#         # that may contain outputs from other steps. It doesn't matter what the
-#         # structure is, as long as it contains the values that may contain outputs.
-#         self.discover_referenced_outputs({
-#             "env": {}
-#         })
-
-#     def produce_action(self, stage, *, scope, actionName, runOrder, variablesNamespace=None, artifacts, fallbackArtifact=None, pipeline, codeBuildDefaults=None, beforeSelfMutation=None):
-
-#         # This is where you control what type of Action gets added to the
-#         # CodePipeline
-#         stage.add_action(cpactions.JenkinsAction(
-#             # Copy 'actionName' and 'runOrder' from the options
-#             action_name=action_name,
-#             run_order=run_order,
-
-#             # Jenkins-specific configuration
-#             type=cpactions.JenkinsActionType.TEST,
-#             jenkins_provider=self.provider,
-#             project_name="MyJenkinsProject",
-
-#             # Translate the FileSet into a codepipeline.Artifact
-#             inputs=[artifacts.to_code_pipeline(self.input)]
-#         ))
-
-#         return pipelines.CodePipelineActionFactoryResult(run_orders_consumed=1)
-
+@jsii.implements(ICodePipelineActionFactory)
+class SomeStep(Step):
+    def __init__(self, id_):
+        super().__init__(id_)
+ 
+    @jsii.member(jsii_name="produceAction")
+    def produce_action(
+            self, stage: IStage,
+            options: ProduceActionOptions,
+            # TODO why are these not passed?
+            # *,
+            # action_name, artifacts, pipeline, run_order, scope,
+            # before_self_mutation=None,
+            # code_build_defaults=None,
+            # fallback_artifact=None
+    ) -> CodePipelineActionFactoryResult:
+        stage.add_action(LambdaInvokeAction(
+            action_name="Test_API_Lambda",
+            lambda_= aws_lambda.Function(self,
+            'TestAPILambda',
+            function_name=core.PhysicalName.GENERATE_IF_NEEDED,
+            code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
+            environment={},
+            handler='test_api.handler',
+            runtime=aws_lambda.Runtime.PYTHON_3_9)
+        )
+        )
+ 
+        return CodePipelineActionFactoryResult(run_orders_consumed=1)
 
 class Pipeline(core.Stack):
     def __init__(self, app: core.App, id: str, *,
@@ -109,7 +109,7 @@ class Pipeline(core.Stack):
      
         # create the stack for dev
         deploy = MakerspaceStage(self, 'Dev', env=accounts['Dev-dranwal'])
-        deploy_stage = pipeline.add_stage(deploy)
+        deploy_stage = pipeline.add_stage(deploy, post=[SomeStep("TestAPI")])
 
         deploy_stage.add_post(
             ShellStep(
@@ -121,16 +121,16 @@ class Pipeline(core.Stack):
             )
         )
 
-        deploy_stage.add_post(
-            ShellStep(
-                "TestAPIEndpoints",
-                commands=[
-                    "python3 visit/lambda_code/test_api/testing_script.py ",
+        # deploy_stage.add_post(
+        #     ShellStep(
+        #         "TestAPIEndpoints",
+        #         commands=[
+        #             "python3 visit/lambda_code/test_api/testing_script.py",
 
-                ],
-            )
-        )
-        deploy_stage.add_post(ManualApprovalStep("PromoteBetaToProd"))
+        #         ],
+        #     )
+        # )
+
         # deploy_stage.add_post(LambdaInvokeAction(
         #     action_name="Test_API_Lambda",
         #     lambda_= aws_lambda.Function(self,
@@ -142,16 +142,16 @@ class Pipeline(core.Stack):
         #     runtime=aws_lambda.Runtime.PYTHON_3_9)
         # ))
 
-        lambda_action = LambdaInvokeAction(
-            action_name="Test_API_Lambda",
-            lambda_= aws_lambda.Function(self,
-            'TestAPILambda',
-            function_name=core.PhysicalName.GENERATE_IF_NEEDED,
-            code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
-            environment={},
-            handler='test_api.handler',
-            runtime=aws_lambda.Runtime.PYTHON_3_9)
-        )
+        # lambda_action = LambdaInvokeAction(
+        #     action_name="Test_API_Lambda",
+        #     lambda_= aws_lambda.Function(self,
+        #     'TestAPILambda',
+        #     function_name=core.PhysicalName.GENERATE_IF_NEEDED,
+        #     code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
+        #     environment={},
+        #     handler='test_api.handler',
+        #     runtime=aws_lambda.Runtime.PYTHON_3_9)
+        # )
 
 
         #testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
