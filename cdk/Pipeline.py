@@ -55,11 +55,13 @@ class Pipeline(core.Stack):
         #                   Storage Service (Amazon S3) and all Docker images to Amazon Elastic Container Registry
         #                   (Amazon ECR) in every account and Region from which it’s consumed, so that they can be used
         #                   during the subsequent deployments.
+
+        codestar_source = CodePipelineSource.connection("DillonRanwala/unified-makerspace", "pipeline_dev",
+                    connection_arn="arn:aws:codestar-connections:us-east-1:149497240198:connection/24ef657f-09b9-40ed-bdbf-7f57ea583228"
+                )
         deploy_cdk_shell_step = ShellStep("Synth",
             # use a connection created using the AWS console to authenticate to GitHub
-            input=CodePipelineSource.connection("DillonRanwala/unified-makerspace", "pipeline_dev",
-                connection_arn="arn:aws:codestar-connections:us-east-1:149497240198:connection/24ef657f-09b9-40ed-bdbf-7f57ea583228"
-            ),
+            input=codestar_source,
             commands=[    
                 # install dependancies for frontend
                 'cd site/visitor-console',
@@ -121,9 +123,7 @@ class Pipeline(core.Stack):
         deploy_stage.add_post(
             ShellStep(
                 "TestAPIEndpoints",
-                input=CodePipelineSource.connection("DillonRanwala/unified-makerspace", "pipeline_dev",
-                    connection_arn="arn:aws:codestar-connections:us-east-1:149497240198:connection/24ef657f-09b9-40ed-bdbf-7f57ea583228"
-                ), # can try to pass entire codestar connection to repo
+                input=codestar_source, # can try to pass entire codestar connection to repo
                 commands=[
                     "ls",
                     "pwd",
