@@ -91,7 +91,7 @@ class Pipeline(core.Stack):
      
         # create the stack for dev
         deploy = MakerspaceStage(self, 'Dev', env=accounts['Dev-dranwal'])
-        deploy_stage = pipeline.add_stage(deploy, post=[SomeStep()])
+        deploy_stage = pipeline.add_stage(deploy)
 
         deploy_stage.add_post(
             ShellStep(
@@ -102,7 +102,21 @@ class Pipeline(core.Stack):
                 ],
             )
         )
+        
+        lambda_action = LambdaInvokeAction(
+            action_name="Test_API_Lambda",
+            lambda_= aws_lambda.Function(self,
+            'TestAPILambda',
+            function_name=core.PhysicalName.GENERATE_IF_NEEDED,
+            code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
+            environment={},
+            handler='test_api.handler',
+            runtime=aws_lambda.Runtime.PYTHON_3_9)
+        )
 
+        pipeline.add_stage(stage_name="Approval_Stage",actions=[lambda_action])
+
+  
         # deploy_stage.add_post(
         #     ShellStep(
         #         "TestAPIEndpoints",
@@ -124,36 +138,11 @@ class Pipeline(core.Stack):
         #     runtime=aws_lambda.Runtime.PYTHON_3_9)
         # ))
 
-        # lambda_action = LambdaInvokeAction(
-        #     action_name="Test_API_Lambda",
-        #     lambda_= aws_lambda.Function(self,
-        #     'TestAPILambda',
-        #     function_name=core.PhysicalName.GENERATE_IF_NEEDED,
-        #     code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
-        #     environment={},
-        #     handler='test_api.handler',
-        #     runtime=aws_lambda.Runtime.PYTHON_3_9)
-        # )
+   
 
-
-        #testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
-
-        #test_stage = pipeline.add_stage(testing)
-        #testing = TestStage(self, 'Test', env=accounts['Dev-dranwal'])
-        #testing_stage = pipeline.add_stage(testing, actions=[lambda_action])
+ 
         
-        # ShellStep(
-        #         "TestAPIGatewayEndpoint",
-        #         env_from_cfn_outputs={
-        #             "ENDPOINT_URL": deploy.service.api_gateway.api.url
-        #         },
-        #         commands=[
-        #             "curl -Ssf $ENDPOINT_URL/visit",
-        #             "curl -Ssf $ENDPOINT_URL/register",
-        #         ],
-        #     )
-        # )
-
+    
       
         
         # # create the stack for beta
