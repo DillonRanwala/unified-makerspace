@@ -6,6 +6,7 @@ from aws_cdk import (
 )
 
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep, ICodePipelineActionFactory, Step, ProduceActionOptions, CodePipelineActionFactoryResult
+
 from aws_cdk.aws_codepipeline_actions import LambdaInvokeAction
 from aws_cdk.aws_codepipeline import StagePlacement, IStage
 
@@ -114,18 +115,22 @@ class Pipeline(core.Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_9)
         )
 
-        pipeline.add_stage(stage_name="Approval_Stage",actions=[lambda_action])
+       # pipeline.add_stage(stage_name="Approval_Stage",actions=[lambda_action])
 
   
-        # deploy_stage.add_post(
-        #     ShellStep(
-        #         "TestAPIEndpoints",
-        #         commands=[
-        #             "python3 visit/lambda_code/test_api/testing_script.py",
+        deploy_stage.add_post(
+            ShellStep(
+                "TestAPIEndpoints",
+                input="cdk/cdk.out",
+                commands=[
+                    "ls",
+                    "pwd",
+                    "ls ..",
+                    "python3 visit/lambda_code/test_api/testing_script.py",
 
-        #         ],
-        #     )
-        # )
+                ],
+            )
+        )
 
         # deploy_stage.add_post(LambdaInvokeAction(
         #     action_name="Test_API_Lambda",
