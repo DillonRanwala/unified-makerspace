@@ -121,7 +121,7 @@ class Pipeline(core.Stack):
         deploy_stage.add_post(
             ShellStep(
                 "TestAPIEndpoints",
-                input="cdk/cdk.out",
+                input=deploy_cdk_shell_step,
                 commands=[
                     "ls",
                     "pwd",
