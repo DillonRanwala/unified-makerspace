@@ -121,12 +121,14 @@ class Pipeline(core.Stack):
         deploy_stage.add_post(
             ShellStep(
                 "TestAPIEndpoints",
-                input=deploy_cdk_shell_step,
+                input=CodePipelineSource.connection("DillonRanwala/unified-makerspace", "pipeline_dev",
+                    connection_arn="arn:aws:codestar-connections:us-east-1:149497240198:connection/24ef657f-09b9-40ed-bdbf-7f57ea583228"
+                ), # can try to pass entire codestar connection to repo
                 commands=[
                     "ls",
                     "pwd",
                     "ls ..",
-                    "python3 visit/lambda_code/test_api/testing_script.py",
+                    "python3 cdk/visit/lambda_code/test_api/testing_script.py",
 
                 ],
             )
