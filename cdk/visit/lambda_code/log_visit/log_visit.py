@@ -118,7 +118,7 @@ class LogVisitFunction():
         except ClientError as e:
             self.logger.error(e.response['Error']['Message'])
 
-    def addVisitEntry(self, current_user, location, tool):
+    def addVisitEntry(self, current_user, location, tool,ttl_expiration):
         
         timestamp = int(time.time())
 
@@ -142,6 +142,7 @@ class LogVisitFunction():
                 'username': current_user,
                 'location': location,
                 'tool': tool,
+                'ttl_expiration':ttl_expiration,
             },
         )
 
@@ -198,13 +199,19 @@ class LogVisitFunction():
         except KeyError:
             self.logger.warn('tool parameter was not provided')
 
+        try:
+            ttl_expiration = body['ttl_expiration']
+        except:
+            ttl_expiration = ""
+
+
         # send user the registration link if not registered
         user_registered = self.isUserRegistered(username)
         if not user_registered:
             self.registrationWorkflow(username)
 
         # add the visit entry
-        status_code = self.addVisitEntry(username, location, tool)
+        status_code = self.addVisitEntry(username, location, tool,ttl_expiration)
 
         # Send response
         return {
