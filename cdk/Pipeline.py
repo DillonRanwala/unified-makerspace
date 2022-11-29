@@ -98,7 +98,7 @@ class Pipeline(core.Stack):
 
         deploy_stage.add_post(
             ShellStep(
-                "TestCloudfrontEndpoint",
+                "TestingCloudfrontEndpoint",
                 commands=[
                     "curl https://d1byeqit66b8mv.cloudfront.net/",
                 ],

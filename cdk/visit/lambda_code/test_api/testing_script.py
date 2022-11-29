@@ -21,10 +21,9 @@ frontend_response = http.request('GET', str(dev_url))
 if frontend_response.status != 200:
     raise Exception("Front End Curl Failed")
 
-search_term = b"Makerspace Visitor Console"
 
-if ~(search_term in frontend_response.data):
-  raise Exception("HTML from Front End Error")
+if frontend_response.data.find(b"Makerspace Visitor Console") == -1:
+   raise Exception("HTML from Front End Error")
 
 now = datetime.now()
 dt_string = now.strftime("%d/%m/%Y_%H:%M:%S")

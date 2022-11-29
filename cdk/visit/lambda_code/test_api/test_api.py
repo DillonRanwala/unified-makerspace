@@ -30,9 +30,7 @@ class TestAPIFunction():
         if frontend_response.status != 200:
             raise Exception("Front End Curl Failed")
 
-        search_term = b"Makerspace Visitor Console"
-
-        if ~(search_term in frontend_response.data):
+        if frontend_response.data.find(b"Makerspace Visitor Console") == -1:
             raise Exception("HTML from Front End Error")
 
         now = datetime.now()
