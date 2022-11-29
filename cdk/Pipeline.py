@@ -105,16 +105,16 @@ class Pipeline(core.Stack):
             )
         )
         
-        lambda_action = LambdaInvokeAction(
-            action_name="Test_API_Lambda",
-            lambda_= aws_lambda.Function(self,
-            'TestAPILambda',
-            function_name=core.PhysicalName.GENERATE_IF_NEEDED,
-            code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
-            environment={},
-            handler='test_api.handler',
-            runtime=aws_lambda.Runtime.PYTHON_3_9)
-        )
+        # lambda_action = LambdaInvokeAction(
+        #     action_name="Test_API_Lambda",
+        #     lambda_= aws_lambda.Function(self,
+        #     'TestAPILambda',
+        #     function_name=core.PhysicalName.GENERATE_IF_NEEDED,
+        #     code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
+        #     environment={},
+        #     handler='test_api.handler',
+        #     runtime=aws_lambda.Runtime.PYTHON_3_9)
+        # )
 
 
   

@@ -103,7 +103,7 @@ class RegisterUserFunction():
 
         timestamp = int(time.time())
 
-        self.dynamodbclient.put_item(
+        user_table_response = self.dynamodbclient.put_item(
             TableName=self.USERS_TABLE_NAME,
             Item={
                 'username': {'S': user_info['username']},
@@ -120,6 +120,9 @@ class RegisterUserFunction():
                 'ttl_expiration':ttl_expiration,
 
             })
+
+        if original_response['ResponseMetadata']['HTTPStatusCode'] != user_table_response['ResponseMetadata']['HTTPStatusCode']:
+            raise Exception("One of Original Table or User Table update failed.")
 
         return original_response['ResponseMetadata']['HTTPStatusCode']
 

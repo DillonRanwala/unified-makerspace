@@ -147,6 +147,9 @@ class LogVisitFunction():
             },
         )
 
+        if original_response['ResponseMetadata']['HTTPStatusCode'] != visit_response['ResponseMetadata']['HTTPStatusCode']:
+            raise Exception("One of Original Table or Visit Table update failed.")
+
         return original_response['ResponseMetadata']['HTTPStatusCode']
 
     def handle_log_visit_request(self, request, context):
