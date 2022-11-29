@@ -66,9 +66,9 @@ class RegisterUserFunction():
 
         # get ttl_expiration from test users if they exist
         try:
-            ttl_expiration = user_info['ttl_expiration']
+            ttl_expiration = {"N":str(user_info['ttl_expiration'])}
         except:
-            ttl_expiration = ""
+            ttl_expiration = {"S":""}
 
         # register the user in the old combined table
         original_response = self.original.put_item(

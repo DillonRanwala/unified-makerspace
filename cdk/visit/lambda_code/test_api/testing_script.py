@@ -11,7 +11,6 @@ import time
 
 
 http = urllib3.PoolManager()  #- lambda might not be able to use requests
-# r = http.request('GET', 'http://httpbin.org/robots.txt')
 
 
 dev_url = "https://d1byeqit66b8mv.cloudfront.net/"
@@ -62,7 +61,7 @@ register_data = json.dumps(register_data)
 
 reg_response = http.request('POST', str(api_url)+"register",body=register_data)
 
-#print(reg_response.status)
+print(reg_response.status)
 if reg_response.status != 200: 
      raise Exception("Register API Call Failed")
 
