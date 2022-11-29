@@ -101,7 +101,6 @@ class Pipeline(core.Stack):
                 "TestCloudfrontEndpoint",
                 commands=[
                     "curl https://d1byeqit66b8mv.cloudfront.net/",
-
                 ],
             )
         )
@@ -117,13 +116,12 @@ class Pipeline(core.Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_9)
         )
 
-       # pipeline.add_stage(stage_name="Approval_Stage",actions=[lambda_action])
 
   
         deploy_stage.add_post(
             ShellStep(
                 "TestAPIEndpoints",
-                input=codestar_source, # can try to pass entire codestar connection to repo
+                input=codestar_source, # pass entire codestar connection to repo
                 commands=[
                     "ls",
                     "pwd",
@@ -134,23 +132,6 @@ class Pipeline(core.Stack):
             )
         )
 
-        # deploy_stage.add_post(LambdaInvokeAction(
-        #     action_name="Test_API_Lambda",
-        #     lambda_= aws_lambda.Function(self,
-        #     'TestAPILambda',
-        #     function_name=core.PhysicalName.GENERATE_IF_NEEDED,
-        #     code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
-        #     environment={},
-        #     handler='test_api.handler',
-        #     runtime=aws_lambda.Runtime.PYTHON_3_9)
-        # ))
-
-   
-
- 
-        
-    
-      
         
         # # create the stack for beta
         # self.beta_stage = MakerspaceStage(self, 'Beta', env=accounts['Beta'])

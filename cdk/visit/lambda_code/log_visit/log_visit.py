@@ -129,6 +129,7 @@ class LogVisitFunction():
                 'SK': current_user,
                 'tool': tool or ' ',
                 'location': location or ' ',
+                'ttl_expiration':ttl_expiration,
             },
         )
 

@@ -71,7 +71,8 @@ class Database(core.Stack):
                                                  partition_key=aws_dynamodb.Attribute(
                                                      name='PK',
                                                      type=aws_dynamodb.AttributeType.STRING),
-                                                 billing_mode=aws_dynamodb.BillingMode.PAY_PER_REQUEST)
+                                                 billing_mode=aws_dynamodb.BillingMode.PAY_PER_REQUEST,
+                                                 time_to_live_attribute="ttl_expiration")
 
     def dynamodb_visits_table(self):
 
