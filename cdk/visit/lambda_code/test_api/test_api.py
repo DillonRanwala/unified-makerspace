@@ -8,7 +8,6 @@ import json
 import urllib3
 import time
 
-#TODO: pass in api url as a parameter, don't hardcode if possible
 class TestAPIFunction():
     """
     This function will be used to wrap the functionality of the lambda
@@ -18,14 +17,23 @@ class TestAPIFunction():
     def __init__(self):
         self.logger = logging.getLogger()
         self.logger.setLevel(logging.INFO)
+        self.env = os.environ["ENV"]
 
 
     def handle_test_api(self):
         http = urllib3.PoolManager()  
 
-        dev_url = "https://d1byeqit66b8mv.cloudfront.net/"
+        if self.env == "Dev": #"Beta"
+            print("https://beta-visit.cumaker.space/")
+            print("https://beta-api.cumaker.space/")
+        elif self.env == "Prod":
+            print("https://visit.cumaker.space/")
+            print("https://api.cumaker.space/")
+            
+        frontend_url = "https://d1byeqit66b8mv.cloudfront.net/"
+       
 
-        frontend_response = http.request('GET', str(dev_url))
+        frontend_response = http.request('GET', str(frontend_url))
 
         if frontend_response.status != 200:
             raise Exception("Front End Curl Failed")

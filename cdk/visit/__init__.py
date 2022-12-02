@@ -59,7 +59,7 @@ class Visit(core.Stack):
             original_table_name, visits_table_name, users_table_name, ("https://" + self.domain_name))
         self.register_user_lambda(
             original_table_name, users_table_name, ("https://" + self.domain_name))
-        self.test_api_lambda()
+        self.test_api_lambda(env=stage)
 
         
 
@@ -146,7 +146,7 @@ class Visit(core.Stack):
             handler='register_user.handler',
             runtime=aws_lambda.Runtime.PYTHON_3_9)
         
-    def test_api_lambda(self):
+    def test_api_lambda(self, env: str):
 
         self.lambda_api_test = aws_lambda.Function(
             self,
@@ -154,7 +154,7 @@ class Visit(core.Stack):
             function_name=core.PhysicalName.GENERATE_IF_NEEDED,
             code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
             environment={
-        
+                'ENV': env
             },
             handler='test_api.handler',
             runtime=aws_lambda.Runtime.PYTHON_3_9)

@@ -8,7 +8,9 @@ import json
 import urllib3
 import time
 
+env = os.environ["ENV"]
 
+print("Current Env is: " + str(env))
 
 http = urllib3.PoolManager()  #- lambda might not be able to use requests
 
