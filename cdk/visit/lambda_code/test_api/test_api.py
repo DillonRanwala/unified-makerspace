@@ -23,16 +23,22 @@ class TestAPIFunction():
     def handle_test_api(self):
         http = urllib3.PoolManager()  
 
-        if self.env == "Dev": #"Beta"
-            print("https://beta-visit.cumaker.space/")
-            print("https://beta-api.cumaker.space/")
+        # Setting up endpoints based on stage
+        frontend_url = ""
+        api_url = ""
+
+        if self.env == "Beta":
+            frontend_url = "https://beta-visit.cumaker.space/"
+            api_url = "https://beta-api.cumaker.space/"
         elif self.env == "Prod":
-            print("https://visit.cumaker.space/")
-            print("https://api.cumaker.space/")
+            frontend_url = "https://visit.cumaker.space/"
+            api_url = "https://api.cumaker.space/"
+        else:
+            raise Exception("Couldn't find Stage")
             
-        frontend_url = "https://d1byeqit66b8mv.cloudfront.net/"
        
 
+        # Simulates "curl <makerspace_frontend_url> | grep Makerspace Visitor Console" command
         frontend_response = http.request('GET', str(frontend_url))
 
         if frontend_response.status != 200:
@@ -41,20 +47,20 @@ class TestAPIFunction():
         if frontend_response.data.find(b"Makerspace Visitor Console") == -1:
             raise Exception("HTML from Front End Error")
 
+
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y_%H:%M:%S")
         
         unix_timestamp_for_ttl = int(time.time()+120) # Triggers ttl removal 2 minutes in future 
 
-        api_url = "https://r90fend561.execute-api.us-east-1.amazonaws.com/prod/"
-
-        visit_data = {"username":"CANARY_DEV_TEST_"+dt_string,"location":"Watt","tool":"Visiting","ttl_expiration":(unix_timestamp_for_ttl)}
+        # testing visit api endpoint
+        visit_data = {"username":"NEW_CANARY_TEST_"+dt_string,"location":"Watt","tool":"Visiting","last_updated":(unix_timestamp_for_ttl)}
         visit_data = json.dumps(visit_data)
 
         visit_response = http.request('POST', str(api_url)+"visit",body=visit_data)
 
 
-        visit_data_unregistered = {"username":"CANARY_DEV_TEST_UNREGISTERED"+dt_string,"location":"Watt","tool":"Visiting","ttl_expiration":(unix_timestamp_for_ttl)}
+        visit_data_unregistered = {"username":"NEW_CANARY_TEST_UNREGISTERED"+dt_string,"location":"Watt","tool":"Visiting","last_updated":(unix_timestamp_for_ttl)}
         visit_data_unregistered  = json.dumps(visit_data_unregistered )
 
         visit_response = http.request('POST', str(api_url)+"visit",body=visit_data)
@@ -63,8 +69,9 @@ class TestAPIFunction():
         if visit_response.status != 200 or visit_response_unregistered.status != 200:
             raise Exception("Visit API Call Failed")
 
+        # testing register api endpoint
         register_data = {
-            "username": "CANARY_DEV_TEST_"+dt_string,
+            "username": "NEW_CANARY_TEST_"+dt_string,
             "firstName": "TEST",
             "lastName": "USER",
             "Gender": "Male",
@@ -74,7 +81,7 @@ class TestAPIFunction():
             "GradYear": "2023",
             "Major": ["Mathematical Sciences"],
             "Minor": ["Business Administration"],
-            "ttl_expiration":(unix_timestamp_for_ttl)
+            "last_updated":(unix_timestamp_for_ttl)
         }
 
         register_data = json.dumps(register_data)
@@ -92,8 +99,6 @@ class TestAPIFunction():
 test_api_function = TestAPIFunction()
 
 def handler(request, context):
-    # This will be hit in prod, and will connect to the stood-up dynamodb
-    # and Simple Email Service clients.
     return test_api_function.handle_test_api()
 
 
