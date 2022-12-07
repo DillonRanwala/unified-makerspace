@@ -78,7 +78,7 @@ class RegisterUserFunction():
                 'GradYear': user_info.get('GradYear', ' '),
                 'Major': ', '.join(sorted(user_info.get('Major', []))),
                 'Minor': ', '.join(sorted(user_info.get('Minor', []))),
-                'last_updated':user_info.get('last_updated','')
+                'ttl_expiration':user_info.get('ttl_expiration','')
             },
         )
 
@@ -113,7 +113,7 @@ class RegisterUserFunction():
                 'grad_year': {'S': grad_year},
                 'majors': {'L': majors},
                 'minors': {'L': minors},
-                'last_updated':{"N":str(user_info.get('last_updated',''))},   # get last_updated from test users, set empty field for non-test users
+                'ttl_expiration':{"N":str(user_info.get('ttl_expiration',''))},   # get ttl_expiration from test users, set empty field for non-test users
 
 
             })
