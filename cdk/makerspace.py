@@ -4,6 +4,7 @@ from visit import Visit
 from api_gateway import SharedApiGateway
 from database import Database
 from dns import (MakerspaceDnsRecords, MakerspaceDns, Domains)
+from log_storage import LogStorage
 
 
 class MakerspaceStage(core.Stage):
@@ -55,6 +56,8 @@ class MakerspaceStack(core.Stack):
         if self.create_dns:
             self.dns_records_stack()
 
+        self.log_storage_stack()
+
     def database_stack(self):
 
         self.database = Database(self.app, self.stage, env=self.env)
@@ -103,3 +106,9 @@ class MakerspaceStack(core.Stack):
                                                 visit_distribution=self.visit.distribution)
 
         self.add_dependency(self.dns_records)
+
+    def log_storage_stack(self):
+        self.log_bucket = LogStorage(self.app, self.stage, env=self.env)
+
+        self.add_dependency(self.log_bucket)
+
