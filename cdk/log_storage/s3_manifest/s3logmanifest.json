@@ -1,0 +1,14 @@
+{
+  "fileLocations": [
+    {
+      "URIs": [
+        "s3://clemson-makerspace-prod-quicksight-log-data/spring_log_v1.csv"
+      ]
+    }
+  ],
+  "globalUploadSettings": {
+    "format": "CSV",
+    "delimiter": ",",
+    "containsHeader": "true"
+  }
+}
