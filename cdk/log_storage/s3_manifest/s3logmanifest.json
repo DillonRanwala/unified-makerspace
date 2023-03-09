@@ -2,7 +2,7 @@
   "fileLocations": [
     {
       "URIs": [
-        "s3://clemson-makerspace-prod-quicksight-log-data/spring_log_v1.csv"
+        "s3://<S3_BUCKET_NAME>/<CSV_NAME>.csv"
       ]
     }
   ],
