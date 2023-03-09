@@ -3,7 +3,7 @@
 This folder contain all relevant code and objects needed for the storage of Makerspace's Logs and their use in Quicksight. Makerspace collects data on Prints, Projects, and more through their Google Form which writes to Google Sheets. This Log contains data that can be utilized in Quicksight, but there is currently not a direct way to link Quicksight to Google Sheets.
 
 ## Folder Structure
-1. _init_.py - Cloudformation stack that contains an S3 bucket that should store any Log files (in .csv format)
+1. \_\_init\_\_.py - Cloudformation stack that contains an S3 bucket that should store any Log files (in .csv format)
 2. s3_manifest/s3logmanifest.json - This manifest JSON format is needed when connecting Quicksight to a new S3 data source
 3. apps_script_code/ - Contains Google Apps Script for uploading Log data from Google Sheets to S3
 
