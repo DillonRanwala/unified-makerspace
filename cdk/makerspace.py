@@ -109,6 +109,6 @@ class MakerspaceStack(core.Stack):
 
     def log_storage_stack(self):
         self.log_bucket = LogStorage(self.app, self.stage, env=self.env)
-
+    
         self.add_dependency(self.log_bucket)
 
