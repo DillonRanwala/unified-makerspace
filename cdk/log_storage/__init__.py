@@ -42,5 +42,12 @@ class LogStorage(core.Stack):
             ]
         )
 
+        # Create an IAM policy from the policy statement
+        policy = aws_iam.Policy(
+            self, "S3LogBucketAccess",
+            policy_name="S3LogBucketAccess",
+            statements=[s3_policy]
+        )
+
         # Attach the S3 policy to the user
-        s3_policy.attach_to_user(self.log_iam_user)
+        policy.attach_to_user(self.log_iam_user)
