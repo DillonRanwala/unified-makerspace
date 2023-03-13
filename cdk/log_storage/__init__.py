@@ -43,4 +43,4 @@ class LogStorage(core.Stack):
         )
 
         # Attach the S3 policy to the user
-        self.log_iam_user.add_to_policy(aws_iam.PolicyDocument(statements=[s3_policy]))
+        s3_policy.attach_to_user(self.log_iam_user)
