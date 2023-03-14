@@ -17,12 +17,13 @@ class LogStorage(core.Stack):
 
         
     def s3_log_bucket(self):
-        self.log_bucket = aws_s3.Bucket(self, 'quicksight-log-data3', bucket_policy=None,
+        self.log_bucket = aws_s3.Bucket(self, 'quicksight-log-data3', 
                         block_public_access=aws_s3.BlockPublicAccess.BLOCK_ALL,
                         encryption=aws_s3.BucketEncryption.S3_MANAGED,
                         versioned=False,
                         enforce_ssl=True,
                       )
+        self.log_bucket.add_to_resource_policy(aws_iam.PolicyStatement())
         
     def log_access_user(self):
        
