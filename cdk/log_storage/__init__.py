@@ -22,7 +22,7 @@ class LogStorage(core.Stack):
                         encryption=aws_s3.BucketEncryption.S3_MANAGED,
                         versioned=False,
                         enforce_ssl=True,
-                        policy=None)
+                      )
         
     def log_access_user(self):
        
