@@ -31,27 +31,27 @@ class LogStorage(core.Stack):
         self.log_iam_user = aws_iam.User(self, 'cdk-log-s3-user')
 
         # Create an S3 policy that allows read/write access to the log bucket
-        # s3_policy = aws_iam.PolicyStatement(
-        #     actions=[
-        #         's3:GetObject',
-        #         's3:PutObject',
-        #         's3:DeleteObject'
-        #     ],
-        #     resources=[
-        #         self.log_bucket.arn_for_objects('*'),
-        #         self.log_bucket.bucket_arn
-        #     ]
-        # )
+        s3_policy = aws_iam.PolicyStatement(
+            actions=[
+                's3:GetObject',
+                's3:PutObject',
+                's3:DeleteObject'
+            ],
+            resources=[
+                self.log_bucket.arn_for_objects('*'),
+                self.log_bucket.bucket_arn
+            ]
+        )
 
-        # # Create an IAM policy from the policy statement
-        # policy = aws_iam.Policy(
-        #     self, "S3LogBucketAccess",
-        #     policy_name="S3LogBucketAccess",
-        #     statements=[s3_policy]
-        # )
+        # Create an IAM policy from the policy statement
+        policy = aws_iam.Policy(
+            self, "S3LogBucketAccess",
+            policy_name="S3LogBucketAccess",
+            statements=[s3_policy]
+        )
 
         # Attach the S3 policy to the user
-        # policy.attach_to_user(self.log_iam_user)
+        policy.attach_to_user(self.log_iam_user)
 
         self.log_bucket.add_to_resource_policy(
             aws_iam.PolicyStatement(
