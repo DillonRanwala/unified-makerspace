@@ -23,7 +23,10 @@ class LogStorage(core.Stack):
                         versioned=False,
                         enforce_ssl=True,
                       )
-        #self.log_bucket.add_to_resource_policy(aws_iam.PolicyStatement())
+        self.log_bucket2 = aws_s3.Bucket(self, 'test_bucket', 
+                block_public_access=aws_s3.BlockPublicAccess.BLOCK_ALL,
+                encryption=aws_s3.BucketEncryption.S3_MANAGED,
+                )
         
     def log_access_user(self):
        
