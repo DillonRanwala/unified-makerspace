@@ -79,7 +79,7 @@ class LogStorage(core.Stack):
                 ],
             conditions={
                 "StringNotEquals": {
-                    "aws:userId": self.log_iam_user.user_arn
+                    "aws:userId": [self.log_iam_user.user_arn,core.Aws.ACCOUNT_ID]
                 }
             })
 )
