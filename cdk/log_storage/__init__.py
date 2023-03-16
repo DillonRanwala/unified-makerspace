@@ -72,6 +72,7 @@ class LogStorage(core.Stack):
         self.log_bucket.add_to_resource_policy(aws_iam.PolicyStatement(
             effect=aws_iam.Effect.DENY,
             actions=["s3:*"],
+            principals=[aws_iam.AnyPrincipal()],
             resources=[
                     self.log_bucket.arn_for_objects("*"),
                     self.log_bucket.bucket_arn
