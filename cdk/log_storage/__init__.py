@@ -21,14 +21,9 @@ class LogStorage(core.Stack):
                         block_public_access=aws_s3.BlockPublicAccess.BLOCK_ALL,
                         encryption=aws_s3.BucketEncryption.S3_MANAGED,
                         versioned=False,
-                        enforce_ssl=True,
+                        #enforce_ssl=True,
                       )
-        self.log_bucket2 = aws_s3.Bucket(self, 'test_bucket', 
-                block_public_access=aws_s3.BlockPublicAccess.BLOCK_ALL,
-                encryption=aws_s3.BucketEncryption.S3_MANAGED,
-                  versioned=False,
-                enforce_ssl=True,
-                )
+  
         
     def log_access_user(self):
        
@@ -56,22 +51,36 @@ class LogStorage(core.Stack):
         )
 
         # Attach the S3 policy to the user
-        policy.attach_to_user(self.log_iam_user)
+        #policy.attach_to_user(self.log_iam_user)
 
-        self.log_bucket.add_to_resource_policy(
-            aws_iam.PolicyStatement(
-                effect=aws_iam.Effect.ALLOW,
-                principals=[aws_iam.ArnPrincipal(self.log_iam_user.user_arn)],
-                actions=[
-                    "s3:GetObject",
-                    "s3:PutObject",
-                    "s3:DeleteObject"
-                ],
-                resources=[
+        # self.log_bucket.add_to_resource_policy(
+        #     aws_iam.PolicyStatement(
+        #         effect=aws_iam.Effect.ALLOW,
+        #         principals=[aws_iam.ArnPrincipal(self.log_iam_user.user_arn)],
+        #         actions=[
+        #             "s3:GetObject",
+        #             "s3:PutObject",
+        #             "s3:DeleteObject"
+        #         ],
+        #         resources=[
+        #             self.log_bucket.arn_for_objects("*"),
+        #             self.log_bucket.bucket_arn
+        #         ]
+        #     )
+        # )
+
+        self.log_bucket.add_to_resource_policy(aws_iam.PolicyStatement(
+            effect=aws_iam.Effect.DENY,
+            actions=["s3:*"],
+            resources=[
                     self.log_bucket.arn_for_objects("*"),
                     self.log_bucket.bucket_arn
-                ]
-            )
-        )
+                ],
+            conditions={
+                "StringNotEquals": {
+                    "aws:userId": self.log_iam_user.user_id
+                }
+            })
+)
 
 
