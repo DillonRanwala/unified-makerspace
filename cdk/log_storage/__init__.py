@@ -26,6 +26,8 @@ class LogStorage(core.Stack):
         self.log_bucket2 = aws_s3.Bucket(self, 'test_bucket', 
                 block_public_access=aws_s3.BlockPublicAccess.BLOCK_ALL,
                 encryption=aws_s3.BucketEncryption.S3_MANAGED,
+                  versioned=False,
+                enforce_ssl=True,
                 )
         
     def log_access_user(self):
