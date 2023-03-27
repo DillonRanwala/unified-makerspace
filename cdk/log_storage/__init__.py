@@ -17,11 +17,11 @@ class LogStorage(core.Stack):
 
         
     def s3_log_bucket(self):
-        self.log_bucket = aws_s3.Bucket(self, 'quicksight-log-dats_permtest', 
+        self.log_bucket = aws_s3.Bucket(self, 'quicksight-log-data_https', 
                         block_public_access=aws_s3.BlockPublicAccess.BLOCK_ALL,
                         encryption=aws_s3.BucketEncryption.S3_MANAGED,
                         versioned=False,
-                        #enforce_ssl=True,
+                        enforce_ssl=True,
                       )
   
         
@@ -51,7 +51,7 @@ class LogStorage(core.Stack):
         )
 
         # Attach the S3 policy to the user
-        #policy.attach_to_user(self.log_iam_user)
+        policy.attach_to_user(self.log_iam_user)
 
         # self.log_bucket.add_to_resource_policy(
         #     aws_iam.PolicyStatement(
@@ -69,19 +69,19 @@ class LogStorage(core.Stack):
         #     )
         # )
 
-        self.log_bucket.add_to_resource_policy(aws_iam.PolicyStatement(
-            effect=aws_iam.Effect.DENY,
-            actions=["s3:PutObject"],
-            principals=[aws_iam.AnyPrincipal()],
-            resources=[
-                    self.log_bucket.arn_for_objects("*"),
-                    self.log_bucket.bucket_arn
-                ],
-            conditions={
-                "StringNotEquals": {
-                    "aws:userId": [self.log_iam_user.user_arn,core.Aws.ACCOUNT_ID]
-                }
-            })
+        # self.log_bucket.add_to_resource_policy(aws_iam.PolicyStatement(
+        #     effect=aws_iam.Effect.DENY,
+        #     actions=["s3:PutObject"],
+        #     principals=[aws_iam.AnyPrincipal()],
+        #     resources=[
+        #             self.log_bucket.arn_for_objects("*"),
+        #             self.log_bucket.bucket_arn
+        #         ],
+        #     conditions={
+        #         "StringNotEquals": {
+        #             "aws:userId": [self.log_iam_user.user_arn,core.Aws.ACCOUNT_ID]
+        #         }
+        #     })
 )
 
 
