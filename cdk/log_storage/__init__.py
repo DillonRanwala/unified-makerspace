@@ -82,6 +82,6 @@ class LogStorage(core.Stack):
         #             "aws:userId": [self.log_iam_user.user_arn,core.Aws.ACCOUNT_ID]
         #         }
         #     })
-)
+
 
 
