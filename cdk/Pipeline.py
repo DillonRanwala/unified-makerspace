@@ -16,26 +16,6 @@ from accounts_config import accounts
 from dns import Domains
 
 
-class SomeStep(ICodePipelineActionFactory):
-    def __init__(self):
-        super().__init__("TestAPIStep")
- 
-
-    def produce_action(self, stage, *, scope, actionName, runOrder, variablesNamespace=None, artifacts, fallbackArtifact=None, pipeline, codeBuildDefaults=None, beforeSelfMutation=None):
-        stage.add_action(LambdaInvokeAction(
-            action_name="Test_API_Lambda",
-            lambda_= aws_lambda.Function(self,
-            'TestAPILambda',
-            function_name=core.PhysicalName.GENERATE_IF_NEEDED,
-            code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
-            environment={},
-            handler='test_api.handler',
-            runtime=aws_lambda.Runtime.PYTHON_3_9)
-        )
-        )
- 
-        return CodePipelineActionFactoryResult(run_orders_consumed=1)
-
 class Pipeline(core.Stack):
     def __init__(self, app: core.App, id: str, *,
                  env: core.Environment) -> None:
@@ -71,11 +51,6 @@ class Pipeline(core.Stack):
                 f'VITE_API_ENDPOINT="https://r90fend561.execute-api.us-east-1.amazonaws.com/prod" npm run build',
                 'mkdir -p ../../cdk/visit/console/Dev',
                 'cp -r dist/* ../../cdk/visit/console/Dev',
-
-                # build for prod
-                # f'VITE_API_ENDPOINT="https://{Domains("Prod").api}" npm run build',
-                # 'mkdir -p ../../cdk/visit/console/Prod',
-                # 'cp -r dist/* ../../cdk/visit/console/Prod',
                 
                 'cd ../..',
 
@@ -105,18 +80,6 @@ class Pipeline(core.Stack):
             )
         )
         
-        # lambda_action = LambdaInvokeAction(
-        #     action_name="Test_API_Lambda",
-        #     lambda_= aws_lambda.Function(self,
-        #     'TestAPILambda',
-        #     function_name=core.PhysicalName.GENERATE_IF_NEEDED,
-        #     code=aws_lambda.Code.from_asset('visit/lambda_code/test_api'),
-        #     environment={},
-        #     handler='test_api.handler',
-        #     runtime=aws_lambda.Runtime.PYTHON_3_9)
-        # )
-
-
   
         deploy_stage.add_post(
             ShellStep(
@@ -131,15 +94,4 @@ class Pipeline(core.Stack):
                 ],
             )
         )
-
-        
-        # # create the stack for beta
-        # self.beta_stage = MakerspaceStage(self, 'Beta', env=accounts['Beta'])
-        # pipeline.add_stage(self.beta_stage)
-
-        # # create the stack for prod
-        # self.prod_stage = MakerspaceStage(self, 'Prod', env=accounts['Prod'])
-        # pipeline.add_stage(self.prod_stage, 
-        #     pre=[ManualApprovalStep("PromoteBetaToProd")]
-        # )
 
